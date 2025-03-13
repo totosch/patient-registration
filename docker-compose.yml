@@ -1,0 +1,36 @@
+version: '3.8'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: laravel_app
+    ports:
+      - "8080:80"
+    volumes:
+      - ./:/var/www/html
+    depends_on:
+      - db
+    environment:
+      APP_ENV: local
+      APP_DEBUG: 'true'
+      DB_HOST: db
+      DB_DATABASE: patients
+      DB_USERNAME: root
+      DB_PASSWORD: root
+      QUEUE_CONNECTION: database
+
+  db:
+    image: mysql:8
+    container_name: mysql_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: patients
+    ports:
+      - "3306:3306"
+    volumes:
+      - dbdata:/var/lib/mysql
+
+volumes:
+  dbdata:
