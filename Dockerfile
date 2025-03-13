@@ -16,16 +16,12 @@ WORKDIR /var/www/html
 COPY . .
 
 RUN a2enmod rewrite
+
 COPY docker/vhost.conf /etc/apache2/sites-available/000-default.conf
 
-
 RUN chown -R www-data:www-data /var/www/html
-
 RUN chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
-
-
-RUN composer install --no-interaction --optimize-autoloader
 
 EXPOSE 80
 
-CMD ["apache2-foreground"]
+CMD ["sh", "-c", "composer install --no-dev --optimize-autoloader && apache2-foreground"]
