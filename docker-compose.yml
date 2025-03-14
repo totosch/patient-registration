@@ -7,12 +7,14 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8000:8000"
+    networks:
+      - network
     volumes:
       - .:/var/www
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     environment:
-      # Variables de entorno para la conexión a la BD (configura tu .env de Laravel acorde)
       DB_HOST: db
       DB_DATABASE: patients
       DB_USERNAME: root
@@ -20,14 +22,25 @@ services:
 
   db:
     image: mysql:8.0
+    networks:
+      - network
     ports:
       - "3306:3306"
+    expose:
+      - 3306
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: patients
     volumes:
       - db_data:/var/lib/mysql
-    command: --default-authentication-plugin=mysql_native_password
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
 
 volumes:
   db_data:
+
+networks:
+  network:
+    driver: bridge

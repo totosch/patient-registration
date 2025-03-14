@@ -25,6 +25,7 @@ COPY . .
 # Copia el archivo de entorno y ejecuta composer install
 RUN cp .env.example .env && composer install
 
+
 # Expone el puerto en el que se ejecutará la app (8000)
 EXPOSE 8000
 
